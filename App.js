@@ -1,3 +1,4 @@
+import './global';
 import React from 'react';
 
 import { createStore, applyMiddleware, compose } from "redux";
@@ -11,6 +12,8 @@ import AppNavigator from "./src/navigators/AppNavigator";
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(Reducer, composeEnhancers(applyMiddleware(thunk)));
+
+import Web3 from 'web3'
 
 export default class App extends React.PureComponent {
   render() {
