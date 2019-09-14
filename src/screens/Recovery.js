@@ -28,6 +28,8 @@ class App extends React.Component {
       password2: ''
     }
 
+    this.navigate = this.props.navigation.navigate
+
     this.onChangePassword1 = this.onChangePassword1.bind(this)
     this.onChangePassword2 = this.onChangePassword2.bind(this)
     this.onChangeMnemonic = this.onChangeMnemonic.bind(this)
@@ -82,6 +84,8 @@ class App extends React.Component {
       address, 
       privateKey
     }]))
+
+    this.navigate("Home")
   }
 
   test () {

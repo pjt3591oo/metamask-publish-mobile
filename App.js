@@ -11,6 +11,10 @@ import AppNavigator from "./src/navigators/AppNavigator";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+import Web3 from 'web3'
+let web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io'));
+window.web3 = web3
+
 const store = createStore(
   Reducer, 
   composeEnhancers(applyMiddleware(thunk)),

@@ -2,7 +2,12 @@ import React from 'react';
 import {
   StyleSheet,
   Text,
-  View
+  View,
+  Image,
+  TextInput,
+  ScrollView,
+  AsyncStorage,
+  TouchableOpacity
 } from 'react-native';
 
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
@@ -18,8 +23,24 @@ class App extends React.Component {
 
   constructor(props) {
     super(props)
-    
-    this.state = {}
+
+    this.state = {
+      wallets: [], // {address, privateKey}
+      balance: 0,
+      history: [
+        '0x0a772aeefdb740a0beace15e0ddbf9f458e29666afa8b9b820311c2a85324fb8',
+        '0x66166f4b7b7738ace17b9145f4ada8c8d49617152ddbd80aafc83f24bac94602',
+        '0x0a772aeefdb740a0beace15e0ddbf9f458e29666afa8b9b820311c2a85324fb8',
+        '0x0a772aeefdb740a0beace15e0ddbf9f458e29666afa8b9b820311c2a85324fb8',
+        '0x0a772aeefdb740a0beace15e0ddbf9f458e29666afa8b9b820311c2a85324fb8',
+        '0x0a772aeefdb740a0beace15e0ddbf9f458e29666afa8b9b820311c2a85324fb8',
+        '0x0a772aeefdb740a0beace15e0ddbf9f458e29666afa8b9b820311c2a85324fb8',
+        '0x0a772aeefdb740a0beace15e0ddbf9f458e29666afa8b9b820311c2a85324fb8',
+        '0x0a772aeefdb740a0beace15e0ddbf9f458e29666afa8b9b820311c2a85324fb8',
+        '0x0a772aeefdb740a0beace15e0ddbf9f458e29666afa8b9b820311c2a85324fb8',
+        '0x66166f4b7b7738ace17b9145f4ada8c8d49617152ddbd80aafc83f24bac94602',
+      ] // {}
+    }
     this._optionMenu = null;
 
     this.navigate = this.props.navigation.navigate
@@ -27,7 +48,26 @@ class App extends React.Component {
     this.hideMenu = this.hideMenu.bind(this)
     this.showMenu = this.showMenu.bind(this)
   }
-  
+
+
+  componentDidMount() {
+    AsyncStorage.getItem('wallet', (err, wallets) => {
+      wallets = JSON.parse(wallets)
+
+      this.setState({
+        wallets: wallets
+      })
+      console.log(wallets)
+      // window.web3.eth.getBalance(`0x${wallets[0].address}`, (err, balance) => {
+      window.web3.eth.getBalance(`0x${wallets[0].address}`, (err, balance) => {
+        console.log(err)
+        console.log(balance)
+        this.setState({
+          balance: balance || 0
+        })
+      })
+    })
+  }
 
   setMenuRef = ref => {
     this._optionMenu = ref;
@@ -46,7 +86,7 @@ class App extends React.Component {
   render() {
     return (
       <View style={common.container}>
-        
+
         <Header />
 
         <View style={menu.container}>
@@ -55,27 +95,56 @@ class App extends React.Component {
           </View>
           <View style={menu.account}>
             <Text style={menu.accountName}>Account</Text>
-            <Text style={menu.accountAddress}>0x22C3...df6B</Text>
+            <Text style={menu.accountAddress}>{this.state.wallets.length ? `0x${this.state.wallets[0].address.slice(0, 6)}...` : ''}</Text>
           </View>
           <View style={menu.option}>
             <Menu
               ref={this.setMenuRef}
 
-              button={<Icon name="home" size={24} color="#4d4d4d" onPress={this.showMenu}></Icon> }
+              button={<Icon name="home" size={24} color="#4d4d4d" onPress={this.showMenu}></Icon>}
               style={menu.dropDownMenu}
             >
               <MenuItem onPress={this.hideMenu}><Text style={menu.dropDownMenuItem}>계정 상세보기</Text></MenuItem>
               <MenuItem onPress={this.hideMenu}><Text style={menu.dropDownMenuItem}>이더스캔에서 보기</Text></MenuItem>
-              
+
               <MenuDivider />
-              
+
             </Menu>
           </View>
         </View>
 
-        <View>
-          <Text>q123</Text>
+
+        <View style={styles.container}>
+          <Image style={styles.img} source={require('../../assets/eth_logo.png')} ></Image>
+          <Text style={styles.balance}>{this.state.balance} ETH</Text>
+
+          <View style={styles.buttonContainer}>
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <TouchableOpacity >
+                <TextInput style={styles.inputButton} editable={false}>입금</TextInput>
+              </TouchableOpacity >
+            </View>
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <TouchableOpacity >
+                <TextInput style={styles.inputButton} editable={false}>전송</TextInput>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
+
+        <Text style={history.title}>히스토리</Text>
+
+        <ScrollView>
+          <View style={history.container}>
+            {
+              this.state.history.map((item, idx) => (
+                  <View key={idx} style={{ paddingTop: 12, paddingBottom: 12, paddingLeft: 6, paddingRight: 6, borderBottomColor: 'rgb(214, 217, 220)', borderBottomWidth: 1 }}>
+                    <Text>{item}</Text>
+                  </View>
+              ))
+            }
+          </View>
+        </ScrollView>
       </View>
     )
   }
@@ -113,7 +182,8 @@ const menu = StyleSheet.create({
   },
   accountAddress: {
     fontSize: 12,
-    color: '#989a9b'
+    color: '#989a9b',
+    // whiteSpace: 'nowrap'
   },
 
   option: {
@@ -132,8 +202,54 @@ const menu = StyleSheet.create({
     padding: 4,
     fontWeight: "600"
   }
+})
 
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: "100%",
+    padding: 24,
+  },
+  buttonContainer: {
+    marginTop: 30,
+    display: "flex",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  img: {
+    width: 120,
+    height: 120
+  },
+  balance: {
+    fontSize: 24,
+    fontWeight: 'bold'
+  },
+  inputButton: {
+    width: 120,
+    height: 54,
+    textAlign: "center",
+    borderColor: '#f7861c',
+    borderWidth: 2,
+    borderRadius: 5,
+  }
+})
 
+const history = StyleSheet.create({
+  container: {
+    marginTop: 5,
+    width: "100%",
+    // display: 'flex'
+  },
+  title: {
+    color: '#848c96',
+    borderBottomColor: 'rgb(214, 217, 220)',
+    borderBottomWidth: 2,
+    paddingLeft: 15,
+    paddingBottom: 10,
+  }
 })
 
 export default App

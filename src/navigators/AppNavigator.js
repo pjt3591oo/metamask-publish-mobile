@@ -8,9 +8,9 @@ import Recovery from "../screens/Recovery";
 // import CreateWalletScreen from "../screens/CreateWalletScreen";
 
 const App = createStackNavigator({
-  Recovery: { screen: Recovery },
   Main: { screen: MainScreen },
   Home: { screen: HomeScreen },
+  Recovery: { screen: Recovery },
   // Intro: { screen: IntroScreen },
   // Pincode: { screen: PincodeScreen }
 });

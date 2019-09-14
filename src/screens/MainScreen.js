@@ -70,7 +70,7 @@ class App extends React.Component {
           
           <View style={content.recovery}>
             <Text style={content.text}>계정을 복구하시겠습니까?</Text>
-            <Text style={content.seed} onPress={() => alert('hellp')}>시드 구문으로 계정 복구하기</Text>
+            <Text style={content.seed} onPress={() => this.navigate("Recovery")}>시드 구문으로 계정 복구하기</Text>
           </View>
         </View>
 
