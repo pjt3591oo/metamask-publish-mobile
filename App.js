@@ -11,9 +11,11 @@ import AppNavigator from "./src/navigators/AppNavigator";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(Reducer, composeEnhancers(applyMiddleware(thunk)));
-
-import Web3 from 'web3'
+const store = createStore(
+  Reducer, 
+  composeEnhancers(applyMiddleware(thunk)),
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 export default class App extends React.PureComponent {
   render() {
