@@ -5,7 +5,8 @@ import {
   View,
   TextInput,
   StatusBar,
-  TouchableOpacity
+  TouchableOpacity,
+  AsyncStorage
 } from 'react-native';
 import Textarea from 'react-native-textarea';
 
@@ -77,15 +78,16 @@ class App extends React.Component {
     
     console.log(address, privateKey)
 
-    // AsyncStorage.setItem('wallet', [{
-    //   address, 
-    //   privateKey
-    // }])
+    AsyncStorage.setItem('wallet', JSON.stringify([{
+      address, 
+      privateKey
+    }]))
   }
 
   test () {
     console.log('test')
     AsyncStorage.getAllKeys((err, keys) => {
+      console.log(err)
       console.log(keys)
       AsyncStorage.multiGet(keys, (err, stores) => {
         stores.map((result, i, store) => {
